@@ -1,0 +1,28 @@
+{
+  "name": "artist-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "start": "node app.js",
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aelia5/artist-backend.git"
+  },
+  "author": "Olga Liubimova",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aelia5/artist-backend/issues"
+  },
+  "homepage": "https://github.com/Aelia5/artist-backend#readme",
+  "dependencies": {
+    "express": "^4.21.1",
+    "git": "^0.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

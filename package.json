@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Aelia5/artist-backend#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "celebrate": "^15.0.3",
     "dotenv": "^16.4.5",
@@ -28,7 +29,11 @@
     "express-winston": "^4.2.0",
     "git": "^0.1.5",
     "helmet": "^8.0.0",
-    "mongoose": "^8.7.1",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.2",
+    "nodemailer": "^6.9.15",
+    "validator": "^13.12.0",
     "winston": "^3.15.0"
   },
   "devDependencies": {

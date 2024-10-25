@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 const { NODE_ENV, SERVICE, USER, PASS } = process.env;
 
-const sendEmail = (email, subject, text) => {
+const sendEmail = (email, subject, message) => {
   let mailConfig;
   if (NODE_ENV === 'production') {
     mailConfig = {
@@ -25,10 +25,14 @@ const sendEmail = (email, subject, text) => {
   }
   const transporter = nodemailer.createTransport(mailConfig);
   const mailOptions = {
-    from: NODE_ENV === 'production' ? USER : 'z5rtrh6zztuf7ycr@ethereal.email',
+    from: {
+      name: 'Sabina Tari',
+      address:
+        NODE_ENV === 'production' ? USER : 'z5rtrh6zztuf7ycr@ethereal.email',
+    },
     to: email,
     subject,
-    text,
+    html: message,
   };
 
   return transporter.sendMail(mailOptions);

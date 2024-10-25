@@ -21,7 +21,10 @@ const conflictMessage = 'Пользователь с такой почтой у�
 
 // const { SUCCESS_CODE } = require('../utils/constants');
 
-const { NODE_ENV, BASE_URL } = process.env;
+// const { NODE_ENV, BASE_URL } = process.env;
+
+const { confirmLetter } = require('../utils/letters');
+const { SUCCESS_CODE } = require('../utils/constants');
 
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then((hash) => {
@@ -33,25 +36,17 @@ module.exports.createUser = (req, res, next) => {
       token: crypto.randomBytes(32).toString('hex'),
     })
       .then(async (user) => {
-        const message = `Вы зарегистрировались на сайте Сабины Таривердиевой. Для подтверждения регистрации пройдите, пожалуйста, по ссылке: ${
-          NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001'
-        }/user/verify/${user._id}/${user.token}`;
-        await sendEmail(
-          user.email,
-          'Сайт Сабины Таривердиевой - подтверждение регистрации',
-          message
-        )
+        const message = confirmLetter(user);
+        await sendEmail(user.email, 'Welcome to Sabina Tari’s site!', message)
           .then(() => {
             res.send({ message: 'Письмо отправлено' });
           })
-          .catch((err) => {
-            console.log(err);
+          .catch(() => {
             next(new EmailError());
           });
       })
 
       .catch((err) => {
-        console.log(err.name);
         if (err.code === 11000) {
           next(new ConflictError(conflictMessage));
         } else if (err.name === 'ValidationError') {
@@ -63,6 +58,40 @@ module.exports.createUser = (req, res, next) => {
         }
       });
   });
+};
+
+module.exports.confirmUser = (req, res, next) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        throw new ValidationError('Пользователь не найден');
+      }
+      if (user.verified === true) {
+        throw new ValidationError(
+          'Пользователь уже подтвердил свою регистрацию'
+        );
+      } else if (user.token !== req.params.token) {
+        throw new ValidationError('Токен для подтверждения некорректен');
+      } else {
+        User.findByIdAndUpdate(
+          user._id,
+          { verified: true, token: '' },
+          { new: true, runValidators: true }
+        ).then((userData) => {
+          res.status(SUCCESS_CODE).send(userData);
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err.name);
+      if (err.name === 'ValidationError') {
+        next(new ValidationError(err.message));
+      } else {
+        next(
+          new DefaultError('При подтверждении регистрации произошла ошибка.')
+        );
+      }
+    });
 };
 
 // module.exports.login = (req, res, next) => {

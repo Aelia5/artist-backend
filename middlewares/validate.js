@@ -54,6 +54,14 @@ module.exports.validateId = celebrate({
     .unknown(true),
 });
 
+module.exports.validateToken = celebrate({
+  params: Joi.object()
+    .keys({
+      token: Joi.string().length(64).hex().required(),
+    })
+    .unknown(true),
+});
+
 module.exports.validateZoneNumber = celebrate({
   params: Joi.object()
     .keys({

@@ -4,13 +4,15 @@ const {
   validateUserName,
   validateEmail,
   validatePassword,
+  validateId,
+  validateToken,
 } = require('../middlewares/validate');
 
 // const houseRouter = require('./houses');
 // const { auth } = require('../middlewares/auth');
 
 const NotFoundError = require('../errors/not-found-err');
-const { login, createUser } = require('../controllers/users');
+const { createUser, confirmUser } = require('../controllers/users');
 
 // router.post('/signin', validateEmail, validatePassword, login);
 router.post(
@@ -20,6 +22,10 @@ router.post(
   validatePassword,
   createUser
 );
+router.get('/verify', (req, res) => {
+  res.send('ok');
+});
+router.get('/verify/:id/:token', validateId, validateToken, confirmUser);
 // router.use(auth);
 // router.use('/users', userRouter);
 // router.use('/houses', houseRouter);

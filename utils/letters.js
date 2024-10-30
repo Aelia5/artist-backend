@@ -1,7 +1,6 @@
 const { NODE_ENV, BASE_URL } = process.env;
 
-const confirmLetter = (user) => `
-<style>
+const letterStyle = `<style>
 @font-face {
    font-family: 'Eskal';
    src: url(${
@@ -53,7 +52,18 @@ height: 145px;
 object-fit: contain;
 object-position: center
 }
-</style>
+</style>`;
+
+const letterSignature = `<p class="main__text" style="text-align: right">Sabina Tari</p>
+<p class="main__text" style="text-align: right">Artist | 3D Sculptor | Creative soul</p>
+<p class="main__text" style="text-align: right; font-size: 16px">My latest works</p>
+<div class="main__works">
+<div class="main__work"><img class="main__image" src="https://placehold.co/400x600/violet/white" alt="Синяя картинка"></img></div>
+<div class="main__work"><img class="main__image" src="https://placehold.co/600x400/green/white" alt="Зелёная картинка"></img></div>
+</div>
+`;
+
+const confirmLetter = (user) => `${letterStyle}
 <main class="main">
 <p class="main__text">Hello, ${user.name}!</p>
 <p class="main__text">Glad to welcome you in my art workshop!</p>
@@ -61,13 +71,16 @@ object-position: center
 <p class="main__text"><a href=${
   NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001'
 }/api/verify/${user._id}/${user.token}>E-mail confirmation</a></p>
-<p class="main__text" style="text-align: right">Sabina Tari</p>
-<p class="main__text" style="text-align: right">Artist | 3D Sculptor | Creative soul</p>
-<p class="main__text" style="text-align: right; font-size: 16px">My latest works</p>
-<div class="main__works">
-<div class="main__work"><img class="main__image" src="https://placehold.co/400x600/violet/white" alt="Синяя картинка"></img></div>
-<div class="main__work"><img class="main__image" src="https://placehold.co/600x400/green/white" alt="Зелёная картинка"></img></div>
-</div>
-</main>`;
+${letterSignature}</main>`;
 
-module.exports = { confirmLetter };
+const resetPasswordLetter = (user) => `${letterStyle}
+<main class="main">
+<p class="main__text">Hello, ${user.name}!</p>
+<p class="main__text">If you forgot your password and want to reset it, please follow the link below:</p>
+<p class="main__text"><a href=${
+  NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001'
+}/api/reset/${user._id}/${user.token}>Password resetting</a></p>
+<p class="main__text" style="font-size: 16px">If you didn't request password resetting, just ignore this letter.</p>
+${letterSignature}</main>`;
+
+module.exports = { confirmLetter, resetPasswordLetter };

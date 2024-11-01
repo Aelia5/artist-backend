@@ -7,7 +7,7 @@ const sendEmail = require('../utils/email');
 const User = require('../models/user');
 const ConflictError = require('../errors/conflict-err');
 const ValidationError = require('../errors/validation-err');
-// const NotFoundError = require('../errors/not-found-err');
+const NotFoundError = require('../errors/not-found-err');
 const UnauthorizedError = require('../errors/unauthorized-err');
 const EmailError = require('../errors/email-error');
 const DefaultError = require('../errors/default-err');
@@ -18,15 +18,18 @@ const {
   defaultErrorMessage,
 } = require('../utils/constants');
 
-// const notFoundMessage = 'Такой пользователь не существует';
+const notFoundMessage = 'Такой пользователь не существует';
 const conflictMessage = 'Пользователь с такой почтой уже существует';
 
-// const { SUCCESS_CODE } = require('../utils/constants');
-
-// const { NODE_ENV, BASE_URL } = process.env;
-
-const { confirmLetter, resetPasswordLetter } = require('../utils/letters');
 const { SUCCESS_CODE } = require('../utils/constants');
+
+const { NODE_ENV, JWT_SECRET } = process.env;
+
+const {
+  confirmLetter,
+  resetPasswordLetter,
+  changeEmailLetter,
+} = require('../utils/letters');
 
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then((hash) => {
@@ -106,10 +109,9 @@ module.exports.login = (req, res, next) => {
       });
     })
     .then((user) => {
-      if (!user.verified) {
-        throw new UnauthorizedError('Регистрация пользователя не подтверждена');
-      }
-      const { NODE_ENV, JWT_SECRET } = process.env;
+      // if (!user.verified) {
+      //   throw new UnauthorizedError('Регистрация пользователя не подтверждена');
+      // }
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
@@ -197,45 +199,90 @@ module.exports.resetPasword = (req, res, next) => {
         });
       }
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new ValidationError(validationErrorMessage));
-      } else {
-        next(new DefaultError(defaultErrorMessage));
-      }
+    .catch(() => {
+      next(new DefaultError(defaultErrorMessage));
     });
 };
 
-// module.exports.getCurrentUser = (req, res, next) => {
-//   User.findById(req.user._id)
-//     .then((user) => {
-//       res.send(user);
-//     })
-//     .catch((err) => {
-//       next(err);
-//     });
-// };
+module.exports.getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
 
-// module.exports.updateUser = (req, res, next) => {
-//   User.findByIdAndUpdate(
-//     req.user,
-//     { name: req.body.name, email: req.body.email },
-//     { new: true, runValidators: true },
-//   )
-//     .then((user) => {
-//       if (!user) {
-//         throw new NotFoundError(notFoundMessage);
-//       } else {
-//         res.send(user);
-//       }
-//     })
-//     .catch((err) => {
-//       if (err.name === 'CastError' || err.name === 'ValidationError') {
-//         next(new ValidationError(err.message || validationErrorMessage));
-//       } else if (err.code === 11000) {
-//         next(new ConflictError(conflictMessage));
-//       } else {
-//         next(new DefaultError('При обновлении профиля произошла ошибка.'));
-//       }
-//     });
-// };
+module.exports.updateUser = (req, res, next) => {
+  User.findById(req.user).then((user) => {
+    if (!user) {
+      next(new NotFoundError(notFoundMessage));
+    } else if (user.email === req.body.email) {
+      User.findByIdAndUpdate(
+        req.user,
+        { name: req.body.name },
+        { new: true, runValidators: true }
+      )
+        .then((userData) => {
+          res.send(userData);
+        })
+        .catch(() => {
+          next(new DefaultError('При обновлении профиля произошла ошибка.'));
+        });
+    } else {
+      User.findByIdAndUpdate(
+        req.user,
+        {
+          name: req.body.name,
+          email: req.body.email,
+          verified: false,
+          token: crypto.randomBytes(32).toString('hex'),
+        },
+        { new: true, runValidators: true }
+      )
+        .then(async (userData) => {
+          const message = changeEmailLetter(userData);
+          await sendEmail(
+            user.email,
+            'Confirming e-mail on Sabina Tari’s site!',
+            message
+          )
+            .then(() => {
+              res.send(userData);
+            })
+            .catch(() => {
+              next(new EmailError());
+            });
+        })
+        .catch((err) => {
+          if (err.code === 11000) {
+            next(new ConflictError(conflictMessage));
+          } else {
+            next(new DefaultError('При обновлении профиля произошла ошибка.'));
+          }
+        });
+    }
+  });
+};
+
+module.exports.changePassword = (req, res, next) => {
+  bcrypt
+    .hash(req.body.password, 10)
+    .then((hash) => {
+      User.findByIdAndUpdate(
+        req.user._id,
+        { password: hash },
+        { new: true, runValidators: true }
+      ).then((userData) => {
+        if (!userData) {
+          next(new NotFoundError(notFoundMessage));
+        } else {
+          res.status(SUCCESS_CODE).send(userData);
+        }
+      });
+    })
+    .catch(() => {
+      next(new DefaultError('При обновлении профиля произошла ошибка.'));
+    });
+};

@@ -19,7 +19,7 @@ const letterStyle = `<style>
   background-repeat: no-repeat;
   background-size: cover;
   min-height: 300px;
-  padding-top: 20px;
+  padding: 20px;
 }
 .main__text {
   font-size: 28px;
@@ -52,6 +52,14 @@ height: 145px;
 object-fit: contain;
 object-position: center
 }
+
+@media screen and (max-width: 426px) {
+.main {
+  padding: 10px}
+
+.main__text {
+  font-size: 18px}
+}
 </style>`;
 
 const letterSignature = `<p class="main__text" style="text-align: right">Sabina Tari</p>
@@ -83,4 +91,14 @@ const resetPasswordLetter = (user) => `${letterStyle}
 <p class="main__text" style="font-size: 16px">If you didn't request password resetting, just ignore this letter.</p>
 ${letterSignature}</main>`;
 
-module.exports = { confirmLetter, resetPasswordLetter };
+const changeEmailLetter = (user) => `${letterStyle}
+<main class="main">
+<p class="main__text">Hello, ${user.name}!</p>
+<p class="main__text">If you have changed your email please take a second to confirm it by following the link below:</p>
+<p class="main__text"><a href=${
+  NODE_ENV === 'production' ? BASE_URL : 'http://localhost:3001'
+}/api/verify/${user._id}/${user.token}>E-mail confirmation</a></p>
+<p class="main__text" style="font-size: 16px">If you didn't request email change, just ignore this letter.</p>
+${letterSignature}</main>`;
+
+module.exports = { confirmLetter, resetPasswordLetter, changeEmailLetter };

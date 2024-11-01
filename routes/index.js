@@ -1,5 +1,5 @@
 const router = require('express').Router();
-// const userRouter = require('./users');
+const userRouter = require('./users');
 const {
   validateUserName,
   validateEmail,
@@ -9,7 +9,7 @@ const {
 } = require('../middlewares/validate');
 
 // const houseRouter = require('./houses');
-// const { auth } = require('../middlewares/auth');
+const { auth } = require('../middlewares/auth');
 
 const NotFoundError = require('../errors/not-found-err');
 const {
@@ -39,8 +39,8 @@ router.patch(
   validatePassword,
   resetPasword
 );
-// router.use(auth);
-// router.use('/users', userRouter);
+router.use(auth);
+router.use('/users', userRouter);
 // router.use('/houses', houseRouter);
 router.use('*', (req, res, next) => {
   const error = new NotFoundError('Страница по указанному маршруту не найдена');

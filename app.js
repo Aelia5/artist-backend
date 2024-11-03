@@ -16,8 +16,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { limiter } = require('./middlewares/limiter');
 
 mongoose.connect(
-  NODE_ENV === 'production' ? DATABASE : 'mongodb://127.0.0.1:27017/artist',
-  { useNewUrlParser: true }
+  NODE_ENV === 'production' ? DATABASE : 'mongodb://127.0.0.1:27017/artist'
 );
 
 app.use(helmet());

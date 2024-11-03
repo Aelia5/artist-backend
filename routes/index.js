@@ -8,7 +8,7 @@ const {
   validateToken,
 } = require('../middlewares/validate');
 
-// const houseRouter = require('./houses');
+const pictureRouter = require('./pictures');
 const { auth } = require('../middlewares/auth');
 
 const NotFoundError = require('../errors/not-found-err');
@@ -41,7 +41,7 @@ router.patch(
 );
 router.use(auth);
 router.use('/users', userRouter);
-// router.use('/houses', houseRouter);
+router.use('/pictures', pictureRouter);
 router.use('*', (req, res, next) => {
   const error = new NotFoundError('Страница по указанному маршруту не найдена');
   next(error);

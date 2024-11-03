@@ -11,7 +11,6 @@ const NotFoundError = require('../errors/not-found-err');
 const UnauthorizedError = require('../errors/unauthorized-err');
 const EmailError = require('../errors/email-error');
 const DefaultError = require('../errors/default-err');
-// const { send } = require('process');
 
 const {
   validationErrorMessage,
@@ -23,13 +22,15 @@ const conflictMessage = 'Пользователь с такой почтой у�
 
 const { SUCCESS_CODE } = require('../utils/constants');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET, ADMIN_EMAIL } = process.env;
 
 const {
   confirmLetter,
   resetPasswordLetter,
   changeEmailLetter,
 } = require('../utils/letters');
+
+const adminEmail = NODE_ENV ? ADMIN_EMAIL : 'lov800@yandex.ru';
 
 module.exports.createUser = (req, res, next) => {
   bcrypt.hash(req.body.password, 10).then((hash) => {
@@ -39,6 +40,7 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
       verified: false,
       token: crypto.randomBytes(32).toString('hex'),
+      admin: req.body.email === adminEmail,
     })
       .then(async (user) => {
         const message = confirmLetter(user);
@@ -98,20 +100,17 @@ module.exports.login = (req, res, next) => {
     .select('+password')
     .then((user) => {
       if (!user) {
-        throw new UnauthorizedError('Вы ввели неправильный логин или пароль');
+        throw new UnauthorizedError('Неправильный логин или пароль');
       }
       return bcrypt.compare(password, user.password).then((matched) => {
         if (!matched) {
-          throw new UnauthorizedError('Вы ввели неправильный логин или пароль');
+          throw new UnauthorizedError('Неправильный логин или пароль');
         }
 
         return user;
       });
     })
     .then((user) => {
-      // if (!user.verified) {
-      //   throw new UnauthorizedError('Регистрация пользователя не подтверждена');
-      // }
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',

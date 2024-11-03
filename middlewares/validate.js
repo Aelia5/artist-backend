@@ -8,18 +8,22 @@ module.exports.validateUserName = celebrate({
     .unknown(true),
 });
 
-module.exports.validateHouse = celebrate({
-  body: Joi.object()
-    .keys({
-      name: Joi.string().required().min(2).max(30),
-    })
-    .unknown(true),
-});
-
-module.exports.validateZone = celebrate({
+module.exports.validatePicture = celebrate({
   body: Joi.object()
     .keys({
       name: Joi.string().required().min(2).max(100),
+      link: Joi.string()
+        .pattern(
+          /^https?:\/\/[a-z0-9\-_.]{1,30}\.[a-z0-9.]{2,6}[a-z0-9\-._~:?#[\]/@!$&*+,;=]{0,1000}$/i
+        )
+        .required(),
+      created: Joi.number().integer().min(2020).max(2100),
+      price: Joi.number().min(0).max(1000000),
+      characters: Joi.string().min(2).max(300),
+      owner: Joi.string().min(2).max(100),
+      technique: Joi.string().min(2).max(100),
+      size: Joi.string().min(2).max(30),
+      section: Joi.string().min(2).max(30),
     })
     .unknown(true),
 });
@@ -40,12 +44,6 @@ module.exports.validatePassword = celebrate({
     .unknown(true),
 });
 
-module.exports.validateTask = celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(300),
-  }),
-});
-
 module.exports.validateId = celebrate({
   params: Joi.object()
     .keys({
@@ -60,26 +58,4 @@ module.exports.validateToken = celebrate({
       token: Joi.string().length(64).hex().required(),
     })
     .unknown(true),
-});
-
-module.exports.validateZoneNumber = celebrate({
-  params: Joi.object()
-    .keys({
-      zone: Joi.number().min(0).max(4),
-    })
-    .unknown(true),
-});
-
-module.exports.validateDate = celebrate({
-  body: Joi.object()
-    .keys({
-      fulfilled: Joi.date() || '',
-    })
-    .unknown(true),
-});
-
-module.exports.validateZoneOrder = celebrate({
-  body: Joi.object().keys({
-    newOrder: Joi.array().items(Joi.number().min(1).max(5)).length(5).unique(),
-  }),
 });

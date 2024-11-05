@@ -1,5 +1,5 @@
 const NotFoundError = require('../errors/not-found-err');
-const UnauthorizedError = require('../errors/unauthorized-err');
+const ForbiddenError = require('../errors/forbidden-err');
 const User = require('../models/user');
 
 module.exports.checkAdmin = (req, res, next) => {
@@ -10,7 +10,7 @@ module.exports.checkAdmin = (req, res, next) => {
       }
       if (!user.admin) {
         next(
-          new UnauthorizedError('Нет администраторских прав для этого действия')
+          new ForbiddenError('Нет администраторских прав для этого действия')
         );
       }
       next();

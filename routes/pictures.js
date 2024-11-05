@@ -1,9 +1,11 @@
 const router = require('express').Router();
-const { validatePicture } = require('../middlewares/validate');
+const { validateSeries, validatePicture } = require('../middlewares/validate');
 
-const { createPicture } = require('../controllers/pictures');
+const { createSeries, createPicture } = require('../controllers/pictures');
 
 const { checkAdmin } = require('../middlewares/checkAdmin');
+
+router.post('/new-series', checkAdmin, validateSeries, createSeries);
 
 router.post('/new-picture', checkAdmin, validatePicture, createPicture);
 

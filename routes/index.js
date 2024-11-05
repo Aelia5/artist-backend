@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const userRouter = require('./users');
+const pictureRouter = require('./pictures');
+const sectionRouter = require('./sections');
 const {
   validateUserName,
   validateEmail,
@@ -8,8 +10,8 @@ const {
   validateToken,
 } = require('../middlewares/validate');
 
-const pictureRouter = require('./pictures');
 const { auth } = require('../middlewares/auth');
+const { checkAdmin } = require('../middlewares/checkAdmin');
 
 const NotFoundError = require('../errors/not-found-err');
 const {
@@ -20,6 +22,7 @@ const {
   checkResetLink,
   resetPasword,
 } = require('../controllers/users');
+const { getAllData } = require('../controllers/pictures');
 
 router.post('/signin', validateEmail, validatePassword, login);
 router.post(
@@ -39,9 +42,12 @@ router.patch(
   validatePassword,
   resetPasword
 );
+router.get('/get-data', getAllData);
 router.use(auth);
 router.use('/users', userRouter);
 router.use('/pictures', pictureRouter);
+router.use(checkAdmin);
+router.use('/sections', sectionRouter);
 router.use('*', (req, res, next) => {
   const error = new NotFoundError('Страница по указанному маршруту не найдена');
   next(error);

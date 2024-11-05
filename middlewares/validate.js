@@ -3,7 +3,23 @@ const { celebrate, Joi } = require('celebrate');
 module.exports.validateUserName = celebrate({
   body: Joi.object()
     .keys({
-      name: Joi.string().required().min(2).max(20),
+      name: Joi.string().required().min(2).max(30),
+    })
+    .unknown(true),
+});
+
+module.exports.validateSection = celebrate({
+  body: Joi.object()
+    .keys({
+      name: Joi.string().required().min(2).max(30),
+    })
+    .unknown(true),
+});
+
+module.exports.validateSeries = celebrate({
+  body: Joi.object()
+    .keys({
+      name: Joi.string().required().min(2).max(30),
     })
     .unknown(true),
 });

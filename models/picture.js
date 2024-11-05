@@ -42,9 +42,20 @@ const pictureSchema = new mongoose.Schema({
   size: {
     type: String,
   },
-  section: {
-    type: String,
-  },
+  sections: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'section',
+      required: true,
+    },
+  ],
+  series: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'series',
+      default: [],
+    },
+  ],
 });
 
 module.exports = mongoose.model('picture', pictureSchema);

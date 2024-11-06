@@ -19,7 +19,6 @@ module.exports.editSection = (req, res, next) => {
     { new: true, runValidators: true }
   )
     .then((sectionData) => {
-      console.log(sectionData);
       if (!sectionData) {
         next(new NotFoundError('Раздел не найден'));
       } else {

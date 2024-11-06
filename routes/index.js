@@ -2,6 +2,8 @@ const router = require('express').Router();
 const userRouter = require('./users');
 const pictureRouter = require('./pictures');
 const sectionRouter = require('./sections');
+const seriesRouter = require('./series');
+
 const {
   validateUserName,
   validateEmail,
@@ -48,6 +50,7 @@ router.use('/users', userRouter);
 router.use('/pictures', pictureRouter);
 router.use(checkAdmin);
 router.use('/sections', sectionRouter);
+router.use('/series', seriesRouter);
 router.use('*', (req, res, next) => {
   const error = new NotFoundError('Страница по указанному маршруту не найдена');
   next(error);

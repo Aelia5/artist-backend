@@ -1,13 +1,19 @@
 const router = require('express').Router();
-const { validateSeries, validatePicture } = require('../middlewares/validate');
+const { validatePicture, validateId } = require('../middlewares/validate');
 
-const { createSeries, createPicture } = require('../controllers/pictures');
+const {
+  createPicture,
+  editPicture,
+  deletePicture,
+} = require('../controllers/pictures');
 
 const { checkAdmin } = require('../middlewares/checkAdmin');
 
-router.post('/new-series', checkAdmin, validateSeries, createSeries);
-
 router.post('/new-picture', checkAdmin, validatePicture, createPicture);
+
+router.patch('/:id', checkAdmin, validateId, validatePicture, editPicture);
+
+router.delete('/:id', checkAdmin, validateId, deletePicture);
 
 // router.get('/find-my-houses', getMyHouses);
 

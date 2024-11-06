@@ -10,6 +10,7 @@ const Series = require('../models/series');
 const { SUCCESS_CODE } = require('../utils/constants');
 // const UnauthorizedError = require('../errors/unauthorized-err');
 const DefaultError = require('../errors/default-err');
+const NotFoundError = require('../errors/not-found-err');
 
 // const { NODE_ENV, ADMIN_EMAIL } = process.env;
 // const { checkAvailability } = require('../middlewares/check');
@@ -17,21 +18,43 @@ const DefaultError = require('../errors/default-err');
 // const notFoundMessage = 'Такого дома не существует';
 // const forbiddenMessage = 'Вы не можете редактировать или удалять чужой дом';
 
-module.exports.createSeries = (req, res, next) => {
-  const series = req.body;
-  Series.create(series)
-    .then((seriesData) => res.status(SUCCESS_CODE).send(seriesData))
-    .catch(() => {
-      next(new DefaultError('При добавлении серии произошла ошибка'));
-    });
-};
-
 module.exports.createPicture = (req, res, next) => {
   const picture = req.body;
   Picture.create(picture)
     .then((pictureData) => res.status(SUCCESS_CODE).send(pictureData))
     .catch(() => {
       next(new DefaultError('При добавлении картины произошла ошибка'));
+    });
+};
+
+module.exports.editPicture = (req, res, next) => {
+  Picture.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  })
+    .then((picture) => {
+      if (!picture) {
+        next(new NotFoundError('Картина не найдена'));
+      } else {
+        res.send(picture);
+      }
+    })
+    .catch(() => {
+      next(new DefaultError('При редактировании картины произошла ошибка'));
+    });
+};
+
+module.exports.deletePicture = (req, res, next) => {
+  Picture.findByIdAndDelete(req.params.id)
+    .then((picture) => {
+      if (!picture) {
+        next(new NotFoundError('Картина не найдена'));
+      } else {
+        res.send(picture);
+      }
+    })
+    .catch(() => {
+      next(new DefaultError('При удалении картины произошла ошибка'));
     });
 };
 

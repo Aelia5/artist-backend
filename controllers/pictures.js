@@ -77,3 +77,38 @@ module.exports.getAllData = (req, res, next) => {
       next(err);
     });
 };
+
+module.exports.putLike = (req, res, next) => {
+  Picture.findByIdAndUpdate(
+    req.params.id,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((picture) => {
+      if (!picture) {
+        throw new NotFoundError('Картина не найдена');
+      } else {
+        res.send(picture);
+      }
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+module.exports.deleteLike = (req, res, next) => {
+  Picture.findByIdAndUpdate(
+    req.params.id,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .then((picture) => {
+      if (!picture) {
+        throw new NotFoundError('Картина не найдена');
+      } else {
+        res.send(picture);
+      }
+    })
+    .catch((err) => {
+      next(err);
+    });
+};

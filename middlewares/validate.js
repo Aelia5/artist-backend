@@ -39,7 +39,6 @@ module.exports.validatePicture = celebrate({
       owner: Joi.string().min(2).max(100),
       technique: Joi.string().min(2).max(100),
       size: Joi.string().min(2).max(30),
-      section: Joi.string().min(2).max(30),
     })
     .unknown(true),
 });
@@ -72,6 +71,18 @@ module.exports.validateToken = celebrate({
   params: Joi.object()
     .keys({
       token: Joi.string().length(64).hex().required(),
+    })
+    .unknown(true),
+});
+
+module.exports.validateRequest = celebrate({
+  body: Joi.object()
+    .keys({
+      header: Joi.string().min(2).max(100),
+      telephone: Joi.string().regex(/^\+?[/.()-]*([0-9][/.()-]*){9,}$/),
+      email: Joi.string().email(),
+      text: Joi.string().min(2).max(1000),
+      author: Joi.string().min(2).max(60),
     })
     .unknown(true),
 });

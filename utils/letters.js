@@ -62,6 +62,40 @@ object-position: center
 }
 </style>`;
 
+const requestStyle = `<style>
+@font-face {
+   font-family: 'Eskal';
+   src: url(${
+     NODE_ENV === 'production'
+       ? `${BASE_URL}/fonts/eskal.ttf`
+       : 'https://vk.com/doc17555747_437656792'
+   });
+}
+.main {
+  min-height: 300px;
+  padding: 20px;
+}
+.main__text {
+  font-size: 16px;
+  text-align: left;
+  font-family: "Eskal", "Comic Sans MS", "Comic Sans", cursive;
+  -webkit-text-stroke: .3px #FFF;
+  text-stroke: .3px #FFF;
+  font-style: italic;
+}
+
+.main__rubric {
+font-weight: 600}
+
+@media screen and (max-width: 426px) {
+.main {
+  padding: 10px}
+
+.main__text {
+  font-size: 14px}
+}
+</style>`;
+
 const letterSignature = `<p class="main__text" style="text-align: right">Sabina Tari</p>
 <p class="main__text" style="text-align: right">Artist | 3D Sculptor | Creative soul</p>
 <p class="main__text" style="text-align: right; font-size: 16px">My latest works</p>
@@ -101,4 +135,19 @@ const changeEmailLetter = (user) => `${letterStyle}
 <p class="main__text" style="font-size: 16px">If you didn't request email change, just ignore this letter.</p>
 ${letterSignature}</main>`;
 
-module.exports = { confirmLetter, resetPasswordLetter, changeEmailLetter };
+const requestLetter = (request) => `${requestStyle}
+<main class="main">
+<p class="main__text"><span class="main__rubric">Поступил запрос о картине «${request.picture.name}»</span></p>
+<p class="main__text"><span class="main__rubric">Автор запроса:</span> ${request.author}</p>
+<p class="main__text"><span class="main__rubric">Заголовок запроса:</span> ${request.header}</p>
+<p class="main__text"><span class="main__rubric">Текст запроса:</span> ${request.text}</p>
+<p class="main__text"><span class="main__rubric">Контактный телефон:</span> ${request.telephone}</p>
+<p class="main__text"><span class="main__rubric">Контактный адрес почты:</span> ${request.email}</p>
+`;
+
+module.exports = {
+  confirmLetter,
+  resetPasswordLetter,
+  changeEmailLetter,
+  requestLetter,
+};

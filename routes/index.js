@@ -10,6 +10,7 @@ const {
   validatePassword,
   validateId,
   validateToken,
+  validateRequest,
 } = require('../middlewares/validate');
 
 const { auth } = require('../middlewares/auth');
@@ -25,6 +26,7 @@ const {
   resetPasword,
 } = require('../controllers/users');
 const { getAllData } = require('../controllers/pictures');
+const { sendRequest } = require('../controllers/requests');
 
 router.post('/signin', validateEmail, validatePassword, login);
 router.post(
@@ -45,6 +47,7 @@ router.patch(
   resetPasword
 );
 router.get('/get-data', getAllData);
+router.post('/send-request/:id', validateId, validateRequest, sendRequest);
 router.use(auth);
 router.use('/users', userRouter);
 router.use('/pictures', pictureRouter);

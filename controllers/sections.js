@@ -13,11 +13,10 @@ module.exports.createSection = (req, res, next) => {
 };
 
 module.exports.editSection = (req, res, next) => {
-  Section.findByIdAndUpdate(
-    req.params.id,
-    { name: req.body.name },
-    { new: true, runValidators: true }
-  )
+  Section.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  })
     .then((sectionData) => {
       if (!sectionData) {
         next(new NotFoundError('Раздел не найден'));

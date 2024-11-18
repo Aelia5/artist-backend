@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const seriesSchema = new mongoose.Schema({
-  name: {
+  nameRu: {
+    type: String,
+    required: true,
+  },
+  nameEn: {
     type: String,
     required: true,
   },

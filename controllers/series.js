@@ -13,11 +13,10 @@ module.exports.createSeries = (req, res, next) => {
 };
 
 module.exports.editSeries = (req, res, next) => {
-  Series.findByIdAndUpdate(
-    req.params.id,
-    { name: req.body.name },
-    { new: true, runValidators: true }
-  )
+  Series.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  })
     .then((seriesData) => {
       if (!seriesData) {
         next(new NotFoundError('Серия не найдена'));

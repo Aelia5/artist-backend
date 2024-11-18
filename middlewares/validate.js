@@ -11,7 +11,8 @@ module.exports.validateUserName = celebrate({
 module.exports.validateSection = celebrate({
   body: Joi.object()
     .keys({
-      name: Joi.string().required().min(2).max(30),
+      nameRu: Joi.string().required().min(2).max(30),
+      nameEn: Joi.string().required().min(2).max(30),
     })
     .unknown(true),
 });
@@ -19,7 +20,8 @@ module.exports.validateSection = celebrate({
 module.exports.validateSeries = celebrate({
   body: Joi.object()
     .keys({
-      name: Joi.string().required().min(2).max(30),
+      nameRu: Joi.string().required().min(2).max(30),
+      nameEn: Joi.string().required().min(2).max(30),
     })
     .unknown(true),
 });
@@ -27,18 +29,24 @@ module.exports.validateSeries = celebrate({
 module.exports.validatePicture = celebrate({
   body: Joi.object()
     .keys({
-      name: Joi.string().required().min(2).max(100),
+      nameRu: Joi.string().required().min(2).max(100),
+      nameEn: Joi.string().required().min(2).max(100),
       link: Joi.string()
         .pattern(
           /^https?:\/\/[a-z0-9\-_.]{1,30}\.[a-z0-9.]{2,6}[a-z0-9\-._~:?#[\]/@!$&*+,;=]{0,1000}$/i
         )
         .required(),
       created: Joi.number().integer().min(2020).max(2100),
-      price: Joi.number().min(0).max(1000000),
-      characters: Joi.string().min(2).max(300),
-      owner: Joi.string().min(2).max(100),
-      technique: Joi.string().min(2).max(100),
-      size: Joi.string().min(2).max(30),
+      priceRub: Joi.number().min(0).max(1000000),
+      priceEur: Joi.number().min(0).max(10000),
+      charactersRu: Joi.string().min(2).max(300),
+      charactersEn: Joi.string().min(2).max(300),
+      ownerRu: Joi.string().min(2).max(100),
+      ownerEn: Joi.string().min(2).max(100),
+      techniqueRu: Joi.string().min(2).max(100),
+      techniqueEn: Joi.string().min(2).max(100),
+      sizeRu: Joi.string().min(2).max(30),
+      sizeEn: Joi.string().min(2).max(30),
     })
     .unknown(true),
 });

@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const pictureSchema = new mongoose.Schema({
-  name: {
+  nameRu: {
+    type: String,
+    required: true,
+  },
+  nameEn: {
     type: String,
     required: true,
   },
@@ -26,20 +30,34 @@ const pictureSchema = new mongoose.Schema({
   created: {
     type: Number,
   },
-  price: {
+  priceRub: {
     type: Number,
   },
-  characters: {
+  priceEur: {
+    type: Number,
+  },
+  charactersRu: {
     type: String,
   },
-
-  owner: {
+  charactersEn: {
     type: String,
   },
-  technique: {
+  ownerRu: {
     type: String,
   },
-  size: {
+  ownerEn: {
+    type: String,
+  },
+  techniqueRu: {
+    type: String,
+  },
+  techniqueEn: {
+    type: String,
+  },
+  sizeRu: {
+    type: String,
+  },
+  sizeEn: {
     type: String,
   },
   sections: [

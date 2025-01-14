@@ -266,22 +266,33 @@ module.exports.updateUser = (req, res, next) => {
 };
 
 module.exports.changePassword = (req, res, next) => {
-  bcrypt
-    .hash(req.body.password, 10)
-    .then((hash) => {
-      User.findByIdAndUpdate(
-        req.user._id,
-        { password: hash },
-        { new: true, runValidators: true }
-      ).then((userData) => {
-        if (!userData) {
-          next(new NotFoundError(notFoundMessage));
-        } else {
-          res.status(SUCCESS_CODE).send(userData);
+  User.findById(req.user)
+    .select('+password')
+    .then((user) =>
+      bcrypt.compare(req.body.oldPassword, user.password).then((matched) => {
+        if (!matched) {
+          next(new NotFoundError('Старый пароль введён неверно'));
         }
-      });
-    })
-    .catch(() => {
-      next(new DefaultError('При обновлении профиля произошла ошибка.'));
+      })
+    )
+    .then(() => {
+      bcrypt
+        .hash(req.body.newPassword, 10)
+        .then((hash) => {
+          User.findByIdAndUpdate(
+            req.user._id,
+            { password: hash },
+            { new: true, runValidators: true }
+          ).then((userData) => {
+            if (!userData) {
+              next(new NotFoundError(notFoundMessage));
+            } else {
+              res.status(SUCCESS_CODE).send(userData);
+            }
+          });
+        })
+        .catch(() => {
+          next(new DefaultError('При смене пароля произошла ошибка.'));
+        });
     });
 };

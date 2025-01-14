@@ -2,7 +2,7 @@ const router = require('express').Router();
 const {
   validateUserName,
   validateEmail,
-  validatePassword,
+  validateTwoPasswords,
 } = require('../middlewares/validate');
 
 const {
@@ -15,6 +15,6 @@ router.get('/me', getCurrentUser);
 
 router.patch('/me/userdata', validateUserName, validateEmail, updateUser);
 
-router.patch('/me/pass', validatePassword, changePassword);
+router.patch('/me/pass', validateTwoPasswords, changePassword);
 
 module.exports = router;

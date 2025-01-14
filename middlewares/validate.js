@@ -67,6 +67,15 @@ module.exports.validatePassword = celebrate({
     .unknown(true),
 });
 
+module.exports.validateTwoPasswords = celebrate({
+  body: Joi.object()
+    .keys({
+      oldPassword: Joi.string().required().min(7),
+      newPassword: Joi.string().required().min(7),
+    })
+    .unknown(true),
+});
+
 module.exports.validateId = celebrate({
   params: Joi.object()
     .keys({

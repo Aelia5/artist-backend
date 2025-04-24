@@ -74,7 +74,7 @@ const pictureSchema = new mongoose.Schema({
       default: [],
     },
   ],
-  landscape: [
+  orientation: [
     {
       type: String,
     },

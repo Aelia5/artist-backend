@@ -74,6 +74,11 @@ const pictureSchema = new mongoose.Schema({
       default: [],
     },
   ],
+  landscape: [
+    {
+      type: String,
+    },
+  ],
 });
 
 module.exports = mongoose.model('picture', pictureSchema);
